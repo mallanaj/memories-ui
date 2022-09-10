@@ -28,20 +28,25 @@ const postSlice = createSlice({
 		updateDelete(state, actions) {
 			state.posts = state.posts.filter((p) => p._id !== actions.payload.id);
 		},
+		updateCreatePost(state, actions) {
+			state.posts.push(actions.payload);
+		},
+		updatePost(state, actions) {
+			state.posts = state.posts.map((p) =>
+				p._id === actions.payload._id ? actions.payload : p
+			);
+		},
 	},
 });
 
 //Thunk fns
 const fetchAllPosts = () => {
-	console.log('In fetch All');
 	return async (dispatch) => {
 		dispatch(postActions.setLoadingPost(true));
 		try {
 			const resp = await service.fetchAllPosts('posts');
-			console.log('resp is ', resp);
 			dispatch(postActions.setAllPosts(resp));
 		} catch (error) {
-			console.log('error');
 		} finally {
 			dispatch(postActions.setLoadingPost(false));
 		}
@@ -51,17 +56,16 @@ const createPost = (data) => {
 	return async (dispatch) => {
 		dispatch(postActions.setLoadingPost(true));
 		try {
-			const resp = await service.addPost(data);
-			dispatch(postActions.setAllPosts(resp));
+			const resp = await service.addPost('posts', data);
+			dispatch(postActions.updateCreatePost(resp));
 		} catch (error) {
 			console.log('error');
 		} finally {
-			dispatch(postActions.setLoadingPost(true));
+			dispatch(postActions.setLoadingPost(false));
 		}
 	};
 };
 const deletePost = (id) => {
-	console.log('On delete thunk');
 	return async (dispatch) => {
 		try {
 			await service.deletePost(id);
@@ -76,7 +80,6 @@ const likePost = (id) => {
 	return async (dispatch) => {
 		try {
 			const data = await service.likePost(id);
-			console.log('data nd id ', id, data);
 			dispatch(postActions.updateLikes({ data, id }));
 		} catch (error) {
 			console.log('error');
@@ -88,12 +91,12 @@ const updatePost = (data) => {
 	return async (dispatch) => {
 		dispatch(postActions.setLoadingPost(true));
 		try {
-			const resp = await service.updatePost(data);
-			dispatch(postActions.setAllPosts(resp));
+			const resp = await service.updatePost(`posts/${data._id}`, data);
+			dispatch(postActions.updatePost(resp));
 		} catch (error) {
 			console.log('error');
 		} finally {
-			dispatch(postActions.setLoadingPost(true));
+			dispatch(postActions.setLoadingPost(false));
 		}
 	};
 };
