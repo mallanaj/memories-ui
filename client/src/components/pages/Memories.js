@@ -1,8 +1,8 @@
 import Memory from './Memory/Memory';
 import React, { useEffect } from 'react';
 import { Alert, Box, CircularProgress, Grid, Typography } from '@mui/material';
-// import Masonry from 'react-masonry-css';
 import Masonry from '@mui/lab/Masonry';
+import { Stack } from '@mui/system';
 
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -13,26 +13,29 @@ import {
 	likePost,
 	updatePost,
 } from '../../store/post-slice/PostSlice';
-import { Stack } from '@mui/system';
+
+import { useHistory } from 'react-router-dom';
 
 const Memories = () => {
 	const { posts, loadingPosts, postsError } = useSelector(
 		(state) => state.post
 	);
 	const dispatch = useDispatch();
+	const history = useHistory();
 
 	useEffect(() => {
 		if (!posts.length) dispatch(fetchAllPosts());
 	}, [dispatch, posts]);
 
 	const delelePostHandler = (id) => {
-		console.log('In on delete handler ', id);
 		dispatch(deletePost(id));
 	};
 
 	const likePostHandler = (id) => {
-		console.log('In like post');
 		dispatch(likePost(id));
+	};
+	const editPostHandler = (data) => {
+		history.push('update-memory', { data, isUpdate: true });
 	};
 
 	return (
@@ -89,6 +92,7 @@ const Memories = () => {
 						post={post}
 						onDelete={delelePostHandler}
 						onLike={likePostHandler}
+						onEdit={editPostHandler}
 					/>
 				))}
 			</Masonry>

@@ -4,14 +4,8 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { useMemo, useState } from 'react';
 
-const darkTheme = createTheme({
-	palette: {
-		mode: 'dark',
-	},
-});
-
 function App() {
-	const [mode, setMode] = useState('dark');
+	const [mode, setMode] = useState('light');
 
 	const onModeChangeHandler = () => {
 		setMode((curMode) => (curMode === 'dark' ? 'light' : 'dark'));

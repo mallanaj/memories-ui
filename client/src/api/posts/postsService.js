@@ -1,7 +1,5 @@
 import http from '../index';
 
-const URL = 'http://localhost:5000/';
-
 const fetchAllPosts = async (url) => {
 	try {
 		const resp = await http.get(url);
@@ -24,7 +22,7 @@ const addPost = async (url, payload) => {
 
 const updatePost = async (url, payload) => {
 	try {
-		const resp = await http.put(url, payload);
+		const resp = await http.patch(url, payload);
 		return resp.data;
 	} catch (error) {
 		// handle error
@@ -33,7 +31,6 @@ const updatePost = async (url, payload) => {
 };
 
 const deletePost = async (id) => {
-	console.log('id id ', id);
 	try {
 		const resp = await http.delete('posts/' + id);
 		return resp.data;
@@ -43,9 +40,7 @@ const deletePost = async (id) => {
 	}
 };
 
-// posts/631bfb6665efd636dccf7eb9/likePost
 const likePost = async (id) => {
-	console.log('id id ', id);
 	try {
 		const resp = await http.patch(`posts/${id}/likePost`);
 		return resp.data;

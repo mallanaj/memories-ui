@@ -8,9 +8,12 @@ const Layout = ({ children, themeChange }) => {
 		<Box>
 			<Header themeChange={themeChange} />
 			<Container
-				bgcolor="yellow"
 				maxWidth="lg"
-				sx={{ minHeight: '83vh', marginTop: 5, marginBottom: 5 }}
+				sx={{
+					minHeight: '83vh',
+					marginTop: 5,
+					marginBottom: 5,
+				}}
 			>
 				{children}
 			</Container>

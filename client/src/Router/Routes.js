@@ -14,6 +14,9 @@ const Routes = () => {
 			<Route path="/add-memory">
 				<AddForm />
 			</Route>
+			<Route path="/update-memory">
+				<AddForm />
+			</Route>
 			<Route path="*">
 				<h3 style={{ textAlign: 'cenetr' }}>Access denies</h3>
 			</Route>

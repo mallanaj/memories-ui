@@ -11,21 +11,18 @@ import EditIcon from '@mui/icons-material/Edit';
 import { ThumbUpAlt } from '@mui/icons-material';
 import { Stack } from '@mui/system';
 
-export default function RecipeReviewCard({ post, onDelete, onLike }) {
-	const [raised, setRaised] = React.useState(false);
-
+export default function RecipeReviewCard({ post, onDelete, onLike, onEdit }) {
 	return (
 		<Card
 			sx={{
 				borderRadius: 5,
 				border: '1px solid yellow',
 			}}
-			raised={raised}
 			title={post.title}
 		>
 			<CardHeader
 				action={
-					<IconButton aria-label="settings">
+					<IconButton aria-label="settings" onClick={() => onEdit(post)}>
 						<EditIcon />
 					</IconButton>
 				}
