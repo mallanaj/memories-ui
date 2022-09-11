@@ -3,7 +3,7 @@ import * as service from '../../api/posts/postsService';
 
 const initialState = {
 	posts: [],
-	loadingPosts: true,
+	loadingPosts: false,
 	postsError: {},
 };
 
@@ -20,13 +20,18 @@ const postSlice = createSlice({
 		setError(state, actions) {
 			state.postsError = actions.payload;
 		},
+		incLikesCount(state, actions) {
+			state.posts = state.posts.map((p) =>
+				p._id !== actions.payload ? p : { ...p, likeCount: p.likeCount + 1 }
+			);
+		},
 		updateLikes(state, actions) {
 			state.posts = state.posts.map((p) =>
 				p._id === actions.payload.id ? actions.payload.data : p
 			);
 		},
 		updateDelete(state, actions) {
-			state.posts = state.posts.filter((p) => p._id !== actions.payload.id);
+			state.posts = state.posts.filter((p) => p._id !== actions.payload);
 		},
 		updateCreatePost(state, actions) {
 			state.posts.push(actions.payload);
@@ -59,30 +64,9 @@ const createPost = (data) => {
 			const resp = await service.addPost('posts', data);
 			dispatch(postActions.updateCreatePost(resp));
 		} catch (error) {
-			console.log('error');
+			console.log('error ', error);
 		} finally {
 			dispatch(postActions.setLoadingPost(false));
-		}
-	};
-};
-const deletePost = (id) => {
-	return async (dispatch) => {
-		try {
-			await service.deletePost(id);
-			dispatch(postActions.update(id));
-		} catch (error) {
-			console.log('error');
-		}
-	};
-};
-
-const likePost = (id) => {
-	return async (dispatch) => {
-		try {
-			const data = await service.likePost(id);
-			dispatch(postActions.updateLikes({ data, id }));
-		} catch (error) {
-			console.log('error');
 		}
 	};
 };
@@ -94,9 +78,32 @@ const updatePost = (data) => {
 			const resp = await service.updatePost(`posts/${data._id}`, data);
 			dispatch(postActions.updatePost(resp));
 		} catch (error) {
-			console.log('error');
+			console.log('error ', error);
 		} finally {
 			dispatch(postActions.setLoadingPost(false));
+		}
+	};
+};
+
+const deletePost = (id) => {
+	return async (dispatch) => {
+		try {
+			await service.deletePost(id);
+			dispatch(postActions.updateDelete(id));
+		} catch (error) {
+			console.log('error ', error);
+		}
+	};
+};
+
+const likePost = (id) => {
+	return async (dispatch) => {
+		try {
+			dispatch(postActions.incLikesCount(id)); // for better ui experience
+			const data = await service.likePost(id);
+			//	dispatch(postActions.updateLikes({ data, id }));
+		} catch (error) {
+			console.log('error ', error);
 		}
 	};
 };

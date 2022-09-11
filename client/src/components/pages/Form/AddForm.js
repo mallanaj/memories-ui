@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
 	Box,
 	Button,
@@ -30,6 +30,7 @@ const AddForm = () => {
 	const dispatch = useDispatch();
 	const history = useHistory();
 	const location = useLocation();
+	const ref = useRef();
 
 	useEffect(() => {
 		if (location.state) {
@@ -39,7 +40,13 @@ const AddForm = () => {
 		}
 	}, [location]);
 
-	useEffect(() => {}, [formData.selectedFile]);
+	useEffect(() => {
+		if (ref.current && !loadingPosts) {
+			history.push('/memories');
+			clearForm();
+		}
+		ref.current = loadingPosts;
+	}, [loadingPosts, history]);
 
 	const handleInput = (event) => {
 		const { name, value } = event.target;
@@ -53,9 +60,7 @@ const AddForm = () => {
 
 	const formSubmitHandler = (event) => {
 		event.preventDefault();
-		dispatch(location ? updatePost(formData) : createPost(formData));
-		clearForm();
-		history.push('/memories');
+		dispatch(isUpdate ? updatePost(formData) : createPost(formData));
 	};
 	const clearForm = () => {
 		setFormData(initialData);
@@ -63,11 +68,6 @@ const AddForm = () => {
 	};
 	return (
 		<>
-			{loadingPosts && (
-				<Stack alignItems="center" justifyContent="center">
-					<CircularProgress sx={{ color: 'text.disabled' }} />
-				</Stack>
-			)}
 			<Box
 				component="form"
 				sx={{
@@ -88,6 +88,15 @@ const AddForm = () => {
 				autoComplete="off"
 				onSubmit={formSubmitHandler}
 			>
+				{loadingPosts && (
+					<Stack
+						alignItems="center"
+						justifyContent="center"
+						sx={{ position: 'absolute', top: '50%' }}
+					>
+						<CircularProgress sx={{ color: 'text.disabled' }} />
+					</Stack>
+				)}
 				<Typography variant="h5" color="text.primary" textAlign="center">
 					{isUpdate ? 'Creating Memory' : 'Creating a Memory'}
 				</Typography>
